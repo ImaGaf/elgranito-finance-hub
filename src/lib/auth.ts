@@ -126,20 +126,63 @@ export const authService = {
   }
 };
 
-// Crear usuario gerente por defecto
+// Crear usuarios por defecto
 export const initializeDefaultUsers = () => {
   const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
   
   if (users.length === 0) {
-    const defaultManager: User & { password: string } = {
-      id: 'manager-001',
-      name: 'Gerente Principal',
-      email: 'gerente@elgranito.com',
-      password: 'Gerente123!',
-      role: 'gerente',
-      createdAt: new Date()
-    };
+    const defaultUsers = [
+      {
+        id: 'manager-001',
+        name: 'Gerente Principal',
+        email: 'gerente@elgranito.com',
+        password: 'Gerente123!',
+        role: 'gerente',
+        createdAt: new Date()
+      },
+      {
+        id: 'assistant-001',
+        name: 'Ana Martínez',
+        email: 'asistente@elgranito.com',
+        password: 'Asistente123!',
+        role: 'asistente',
+        createdAt: new Date()
+      },
+      {
+        id: 'cliente-001',
+        name: 'Juan Pérez',
+        email: 'juan.perez@email.com',
+        password: 'Cliente123!',
+        role: 'cliente',
+        cedula: '1234567890',
+        telefono: '0987654321',
+        direccion: 'Av. Principal 123',
+        createdAt: new Date()
+      },
+      {
+        id: 'cliente-002',
+        name: 'María González',
+        email: 'maria.gonzalez@email.com',
+        password: 'Cliente123!',
+        role: 'cliente',
+        cedula: '0987654321',
+        telefono: '0912345678',
+        direccion: 'Calle Secundaria 456',
+        createdAt: new Date()
+      },
+      {
+        id: 'cliente-003',
+        name: 'Carlos Silva',
+        email: 'carlos.silva@email.com',
+        password: 'Cliente123!',
+        role: 'cliente',
+        cedula: '1122334455',
+        telefono: '0976543210',
+        direccion: 'Barrio Los Pinos 789',
+        createdAt: new Date()
+      }
+    ];
 
-    localStorage.setItem(USERS_KEY, JSON.stringify([defaultManager]));
+    localStorage.setItem(USERS_KEY, JSON.stringify(defaultUsers));
   }
 };

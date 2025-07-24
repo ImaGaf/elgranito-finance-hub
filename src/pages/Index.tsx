@@ -3,7 +3,11 @@ import { LoginForm } from '@/components/auth/LoginForm';
 import { RegisterForm } from '@/components/auth/RegisterForm';
 import { Navbar } from '@/components/layout/Navbar';
 import { ClientDashboard } from '@/components/dashboard/ClientDashboard';
+import { ManagerDashboard } from '@/components/dashboard/ManagerDashboard';
+import { AssistantDashboard } from '@/components/dashboard/AssistantDashboard';
 import { PaymentForm } from '@/components/payments/PaymentForm';
+import { ClientCreditsView } from '@/components/credits/ClientCreditsView';
+import { CertificatesView } from '@/components/certificates/CertificatesView';
 import { authService, initializeDefaultUsers, User } from '@/lib/auth';
 
 const Index = () => {
@@ -15,6 +19,11 @@ const Index = () => {
   useEffect(() => {
     // Inicializar usuarios por defecto
     initializeDefaultUsers();
+    
+    // Inicializar datos de prueba
+    import('@/lib/credits').then(({ initializeMockData }) => {
+      initializeMockData();
+    });
     
     // Verificar si hay usuario logueado
     const currentUser = authService.getCurrentUser();
@@ -47,8 +56,11 @@ const Index = () => {
       case 'dashboard':
         if (user.role === 'cliente') {
           return <ClientDashboard user={user} onNavigate={handleNavigate} />;
+        } else if (user.role === 'gerente') {
+          return <ManagerDashboard user={user} onNavigate={handleNavigate} />;
+        } else if (user.role === 'asistente') {
+          return <AssistantDashboard user={user} onNavigate={handleNavigate} />;
         }
-        // TODO: Implementar dashboards para asistente y gerente
         return (
           <div className="text-center py-12">
             <h2 className="text-2xl font-bold mb-4">Bienvenido, {user.name}</h2>
@@ -66,29 +78,13 @@ const Index = () => {
 
       case 'mis-creditos':
         if (user.role === 'cliente') {
-          // TODO: Implementar componente de créditos del cliente
-          return (
-            <div className="text-center py-12">
-              <h2 className="text-2xl font-bold mb-4">Mis Créditos</h2>
-              <p className="text-muted-foreground">
-                Consulta de créditos en desarrollo...
-              </p>
-            </div>
-          );
+          return <ClientCreditsView user={user} onNavigate={handleNavigate} />;
         }
         break;
 
       case 'certificados':
         if (user.role === 'cliente') {
-          // TODO: Implementar componente de certificados
-          return (
-            <div className="text-center py-12">
-              <h2 className="text-2xl font-bold mb-4">Certificados de Pago</h2>
-              <p className="text-muted-foreground">
-                Generación de certificados en desarrollo...
-              </p>
-            </div>
-          );
+          return <CertificatesView user={user} />;
         }
         break;
 
