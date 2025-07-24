@@ -1,0 +1,145 @@
+export interface User {
+  id: string;
+  name: string;
+  email: string;
+  role: 'cliente' | 'asistente' | 'gerente';
+  cedula?: string;
+  telefono?: string;
+  direccion?: string;
+  createdAt: Date;
+}
+
+export interface AuthState {
+  user: User | null;
+  isAuthenticated: boolean;
+}
+
+// Simulación de base de datos en localStorage
+const USERS_KEY = 'el_granito_users';
+const CURRENT_USER_KEY = 'el_granito_current_user';
+
+export const authService = {
+  // Registrar cliente
+  registerClient: async (userData: {
+    name: string;
+    email: string;
+    password: string;
+    cedula?: string;
+    telefono?: string;
+    direccion?: string;
+  }): Promise<{ success: boolean; message: string; user?: User }> => {
+    const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+    
+    // Verificar si el email ya existe
+    if (users.find((user: User) => user.email === userData.email)) {
+      return { success: false, message: 'Este correo ya está registrado. Intente iniciar sesión o recuperar su contraseña.' };
+    }
+
+    // Validar formato de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(userData.email)) {
+      return { success: false, message: 'El formato del correo electrónico no es válido.' };
+    }
+
+    // Validar contraseña
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(userData.password)) {
+      return { success: false, message: 'La contraseña no es segura. Intente con una más fuerte.' };
+    }
+
+    const newUser: User = {
+      id: Date.now().toString(),
+      name: userData.name,
+      email: userData.email,
+      role: 'cliente',
+      cedula: userData.cedula,
+      telefono: userData.telefono,
+      direccion: userData.direccion,
+      createdAt: new Date()
+    };
+
+    users.push({ ...newUser, password: userData.password });
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+
+    return { success: true, message: 'Registro exitoso', user: newUser };
+  },
+
+  // Registrar asistente (solo gerente)
+  registerAssistant: async (userData: {
+    name: string;
+    email: string;
+    password: string;
+  }, currentUser: User): Promise<{ success: boolean; message: string; user?: User }> => {
+    if (currentUser.role !== 'gerente') {
+      return { success: false, message: 'No tiene permisos para realizar esta acción.' };
+    }
+
+    const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+    
+    if (users.find((user: User) => user.email === userData.email)) {
+      return { success: false, message: 'El correo ingresado ya está registrado. Intente con otro.' };
+    }
+
+    const newUser: User = {
+      id: Date.now().toString(),
+      name: userData.name,
+      email: userData.email,
+      role: 'asistente',
+      createdAt: new Date()
+    };
+
+    users.push({ ...newUser, password: userData.password });
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+
+    return { success: true, message: 'Asistente registrado exitosamente', user: newUser };
+  },
+
+  // Iniciar sesión
+  login: async (email: string, password: string): Promise<{ success: boolean; message: string; user?: User }> => {
+    const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+    const user = users.find((u: any) => u.email === email && u.password === password);
+
+    if (!user) {
+      return { success: false, message: 'Credenciales incorrectas. Intente nuevamente.' };
+    }
+
+    const { password: _, ...userWithoutPassword } = user;
+    localStorage.setItem(CURRENT_USER_KEY, JSON.stringify(userWithoutPassword));
+
+    return { success: true, message: 'Inicio de sesión exitoso', user: userWithoutPassword };
+  },
+
+  // Obtener usuario actual
+  getCurrentUser: (): User | null => {
+    const userStr = localStorage.getItem(CURRENT_USER_KEY);
+    return userStr ? JSON.parse(userStr) : null;
+  },
+
+  // Cerrar sesión
+  logout: () => {
+    localStorage.removeItem(CURRENT_USER_KEY);
+  },
+
+  // Verificar si está autenticado
+  isAuthenticated: (): boolean => {
+    return !!localStorage.getItem(CURRENT_USER_KEY);
+  }
+};
+
+// Crear usuario gerente por defecto
+export const initializeDefaultUsers = () => {
+  const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+  
+  if (users.length === 0) {
+    const defaultManager: User & { password: string } = {
+      id: 'manager-001',
+      name: 'Gerente Principal',
+      email: 'gerente@elgranito.com',
+      password: 'Gerente123!',
+      role: 'gerente',
+      createdAt: new Date()
+    };
+
+    localStorage.setItem(USERS_KEY, JSON.stringify([defaultManager]));
+  }
+};
