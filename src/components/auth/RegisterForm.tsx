@@ -7,7 +7,8 @@ import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Loader2, Mail, Lock, User, Phone, MapPin, IdCard } from 'lucide-react';
 import { authService } from '@/lib/auth';
 import logo from '@/assets/el-granito-logo.png';
-
+import { Eye, EyeOff } from 'lucide-react';
+// ...otros imports...
 interface RegisterFormProps {
   onRegisterSuccess: () => void;
   onSwitchToLogin: () => void;
@@ -26,6 +27,8 @@ export const RegisterForm = ({ onRegisterSuccess, onSwitchToLogin }: RegisterFor
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
+const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const validateForm = () => {
     if (formData.name.length < 3) {
@@ -138,40 +141,53 @@ export const RegisterForm = ({ onRegisterSuccess, onSwitchToLogin }: RegisterFor
                 />
               </div>
             </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="password">Contraseña *</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="password"
-                    type="password"
-                    placeholder="••••••••"
-                    value={formData.password}
-                    onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-                    className="pl-10"
-                    required
-                  />
+                <div className="space-y-2">
+                  <Label htmlFor="password">Contraseña *</Label>
+                  <div className="relative">
+                    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      id="password"
+                      type={showPassword ? "text" : "password"}
+                      placeholder="••••••••"
+                      value={formData.password}
+                      onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                      className="pl-10 pr-10"
+                      required
+                    />
+                    <button
+                      type="button"
+                      className="absolute right-3 top-3"
+                      onClick={() => setShowPassword((v) => !v)}
+                      tabIndex={-1}
+                    >
+                      {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                    </button>
+                  </div>
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="confirmPassword">Confirmar Contraseña *</Label>
-                <div className="relative">
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    placeholder="••••••••"
-                    value={formData.confirmPassword}
-                    onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
-                    className="pl-10"
-                    required
-                  />
-                </div>
-              </div>
-            </div>
+<div className="space-y-2">
+  <Label htmlFor="confirmPassword">Confirmar Contraseña *</Label>
+  <div className="relative">
+    <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
+    <Input
+      id="confirmPassword"
+      type={showConfirmPassword ? "text" : "password"}
+      placeholder="••••••••"
+      value={formData.confirmPassword}
+      onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+      className="pl-10 pr-10"
+      required
+    />
+    <button
+      type="button"
+      className="absolute right-3 top-3"
+      onClick={() => setShowConfirmPassword((v) => !v)}
+      tabIndex={-1}
+    >
+      {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+    </button>
+  </div>
+</div>
 
             <div className="space-y-2">
               <Label htmlFor="cedula">Cédula/RUC</Label>

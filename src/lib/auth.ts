@@ -43,9 +43,12 @@ export const authService = {
 
     // Validar contraseña
     const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-    if (!passwordRegex.test(userData.password)) {
-      return { success: false, message: 'La contraseña no es segura. Intente con una más fuerte.' };
-    }
+if (!passwordRegex.test(userData.password)) {
+  return { 
+    success: false, 
+    message: 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial. Ejemplo: Cliente123!, MiClave2024@, ContraseñaSegura1$' 
+  };
+}
 
     const newUser: User = {
       id: Date.now().toString(),

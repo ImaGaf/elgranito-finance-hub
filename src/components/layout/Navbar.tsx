@@ -65,10 +65,11 @@ export const Navbar = ({ user, onLogout, onNavigate, currentSection }: NavbarPro
   return (
     <nav className="bg-card shadow-card border-b border-border">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex justify-between h-16">
+        <div className="flex justify-between h-24">
           {/* Logo y nombre */}
           <div className="flex items-center">
-            <img src={logo} alt="El Granito" className="h-8 w-8 mr-3" />
+            <img src={logo} alt="El Granito" className="h-32 w-32 mr-3" />
+
             <span className="text-xl font-bold text-primary">El Granito</span>
           </div>
 
