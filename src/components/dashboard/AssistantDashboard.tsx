@@ -66,10 +66,10 @@ export const AssistantDashboard = ({ user, onNavigate }: AssistantDashboardProps
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Contactos Pendientes</CardTitle>
-            <Phone className="h-4 w-4 text-warning" />
+            <Phone className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-warning">{stats.pendingContacts}</div>
+            <div className="text-2xl font-bold text-green-600">{stats.pendingContacts}</div>
             <p className="text-xs text-muted-foreground">Por contactar hoy</p>
           </CardContent>
         </Card>
@@ -88,10 +88,10 @@ export const AssistantDashboard = ({ user, onNavigate }: AssistantDashboardProps
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Reportes Generados</CardTitle>
-            <FileText className="h-4 w-4 text-success" />
+            <FileText className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-success">{stats.reportsGenerated}</div>
+            <div className="text-2xl font-bold text-green-600">{stats.reportsGenerated}</div>
             <p className="text-xs text-muted-foreground">Este mes</p>
           </CardContent>
         </Card>
@@ -117,13 +117,13 @@ export const AssistantDashboard = ({ user, onNavigate }: AssistantDashboardProps
         <Card className="cursor-pointer hover:shadow-card transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <Search className="h-5 w-5 text-primary" />
+              <Search className="h-5 w-5 text-green-600" />
               <span>Consulta de Clientes</span>
             </CardTitle>
             <CardDescription>Buscar información de clientes registrados</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => onNavigate('clientes')} className="w-full" variant="gradient">
+            <Button onClick={() => onNavigate('clientes')} className="w-full bg-green-600 hover:bg-green-700 text-white">
               Buscar Clientes
             </Button>
           </CardContent>
@@ -132,13 +132,13 @@ export const AssistantDashboard = ({ user, onNavigate }: AssistantDashboardProps
         <Card className="cursor-pointer hover:shadow-card transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <FileText className="h-5 w-5 text-success" />
+              <FileText className="h-5 w-5 text-green-600" />
               <span>Reportes de Pagos</span>
             </CardTitle>
             <CardDescription>Generar reportes de pagos y seguimiento</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => onNavigate('reportes')} className="w-full" variant="secondary">
+            <Button onClick={() => onNavigate('reportes')} className="w-full bg-green-600 hover:bg-green-700 text-white">
               Generar Reportes
             </Button>
           </CardContent>
@@ -155,18 +155,18 @@ export const AssistantDashboard = ({ user, onNavigate }: AssistantDashboardProps
           <div className="space-y-3">
             <div className="flex items-center justify-between p-3 border border-border rounded-lg">
               <div className="flex items-center space-x-3">
-                <Clock className="h-4 w-4 text-warning" />
+                <Clock className="h-4 w-4 text-green-600" />
                 <div>
                   <p className="font-medium">Contactar a María González</p>
                   <p className="text-sm text-muted-foreground">Pago vencido desde hace 3 días</p>
                 </div>
               </div>
-              <Badge variant="warning">Urgente</Badge>
+              <Badge className="bg-green-100 text-green-800 border-green-200">Urgente</Badge>
             </div>
 
             <div className="flex items-center justify-between p-3 border border-border rounded-lg">
               <div className="flex items-center space-x-3">
-                <Phone className="h-4 w-4 text-primary" />
+                <Phone className="h-4 w-4 text-green-600" />
                 <div>
                   <p className="font-medium">Seguimiento Luis Rodríguez</p>
                   <p className="text-sm text-muted-foreground">Recordatorio de pago próximo</p>
@@ -177,7 +177,7 @@ export const AssistantDashboard = ({ user, onNavigate }: AssistantDashboardProps
 
             <div className="flex items-center justify-between p-3 border border-border rounded-lg">
               <div className="flex items-center space-x-3">
-                <FileText className="h-4 w-4 text-success" />
+                <FileText className="h-4 w-4 text-green-600" />
                 <div>
                   <p className="font-medium">Generar reporte mensual</p>
                   <p className="text-sm text-muted-foreground">Reporte de morosidad de julio</p>
@@ -205,17 +205,17 @@ export const AssistantDashboard = ({ user, onNavigate }: AssistantDashboardProps
               <Badge variant="destructive">Crítico</Badge>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-warning/10 border border-warning/20 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
               <div>
-                <p className="font-medium text-warning">Ana López</p>
+                <p className="font-medium text-green-700">Ana López</p>
                 <p className="text-sm text-muted-foreground">15 días de mora - $1,800</p>
               </div>
-              <Badge variant="warning">Alto</Badge>
+              <Badge className="bg-green-100 text-green-800 border-green-200">Alto</Badge>
             </div>
 
-            <div className="flex items-center justify-between p-3 bg-warning/10 border border-warning/20 rounded-lg">
+            <div className="flex items-center justify-between p-3 bg-green-50 border border-green-200 rounded-lg">
               <div>
-                <p className="font-medium text-warning">Roberto Silva</p>
+                <p className="font-medium text-green-700">Roberto Silva</p>
                 <p className="text-sm text-muted-foreground">7 días de mora - $3,200</p>
               </div>
               <Badge variant="outline">Medio</Badge>

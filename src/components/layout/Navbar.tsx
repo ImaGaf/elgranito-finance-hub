@@ -63,14 +63,12 @@ export const Navbar = ({ user, onLogout, onNavigate, currentSection }: NavbarPro
   };
 
   return (
-    <nav className="bg-card shadow-card border-b border-border">
+    <nav className="navbar-granito shadow-elegant">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-24">
           {/* Logo y nombre */}
           <div className="flex items-center">
-            <img src={logo} alt="El Granito" className="h-32 w-32 mr-3" />
-
-            <span className="text-xl font-bold text-primary">El Granito</span>
+            <img src={logo} alt="El Granito" className="h-24 w-24 mr-3 object-contain" />
           </div>
 
           {/* Menú desktop */}
@@ -82,7 +80,11 @@ export const Navbar = ({ user, onLogout, onNavigate, currentSection }: NavbarPro
                   key={item.id}
                   variant={currentSection === item.id ? "default" : "ghost"}
                   onClick={() => onNavigate(item.id)}
-                  className="flex items-center space-x-2"
+                  className={`flex items-center space-x-2 transition-all duration-300 ${
+                    currentSection === item.id 
+                      ? 'bg-green-600 hover:bg-green-700 text-white' 
+                      : 'text-green-700 hover:bg-green-50 hover:text-green-800'
+                  }`}
                 >
                   <Icon className="h-4 w-4" />
                   <span>{item.label}</span>
@@ -94,9 +96,9 @@ export const Navbar = ({ user, onLogout, onNavigate, currentSection }: NavbarPro
           {/* Usuario y logout */}
           <div className="flex items-center space-x-4">
             <div className="hidden md:flex items-center space-x-2">
-              <User className="h-4 w-4 text-muted-foreground" />
-              <span className="text-sm font-medium">{user.name}</span>
-              <span className="text-xs text-muted-foreground capitalize">
+              <User className="h-4 w-4 text-green-600" />
+              <span className="text-sm font-medium text-green-800">{user.name}</span>
+              <span className="text-xs text-green-600 capitalize">
                 ({user.role})
               </span>
             </div>
@@ -104,7 +106,7 @@ export const Navbar = ({ user, onLogout, onNavigate, currentSection }: NavbarPro
               variant="outline"
               size="sm"
               onClick={handleLogout}
-              className="flex items-center space-x-2"
+              className="flex items-center space-x-2 border-green-500 text-green-700 hover:bg-green-500 hover:text-white transition-all duration-300"
             >
               <LogOut className="h-4 w-4" />
               <span className="hidden md:inline">Cerrar Sesión</span>
@@ -114,7 +116,7 @@ export const Navbar = ({ user, onLogout, onNavigate, currentSection }: NavbarPro
             <Button
               variant="ghost"
               size="icon"
-              className="md:hidden"
+              className="md:hidden text-green-600 hover:bg-green-50"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
             >
               {isMobileMenuOpen ? (
@@ -129,11 +131,11 @@ export const Navbar = ({ user, onLogout, onNavigate, currentSection }: NavbarPro
         {/* Menú móvil */}
         {isMobileMenuOpen && (
           <div className="md:hidden">
-            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-border bg-muted/50">
+            <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3 border-t border-green-200 bg-green-50">
               <div className="flex items-center space-x-2 mb-4 px-3 py-2">
-                <User className="h-4 w-4 text-muted-foreground" />
-                <span className="text-sm font-medium">{user.name}</span>
-                <span className="text-xs text-muted-foreground capitalize">
+                <User className="h-4 w-4 text-green-600" />
+                <span className="text-sm font-medium text-green-800">{user.name}</span>
+                <span className="text-xs text-green-600 capitalize">
                   ({user.role})
                 </span>
               </div>
@@ -147,7 +149,11 @@ export const Navbar = ({ user, onLogout, onNavigate, currentSection }: NavbarPro
                       onNavigate(item.id);
                       setIsMobileMenuOpen(false);
                     }}
-                    className="w-full justify-start flex items-center space-x-2"
+                    className={`w-full justify-start flex items-center space-x-2 transition-all duration-300 ${
+                      currentSection === item.id 
+                        ? 'bg-green-600 hover:bg-green-700 text-white' 
+                        : 'text-green-700 hover:bg-green-100 hover:text-green-800'
+                    }`}
                   >
                     <Icon className="h-4 w-4" />
                     <span>{item.label}</span>

@@ -54,7 +54,7 @@ export const ClientDashboard = ({ user, onNavigate }: ClientDashboardProps) => {
   return (
     <div className="space-y-6">
       {/* Encabezado de bienvenida */}
-      <div className="bg-gradient-hero p-6 rounded-lg shadow-glow text-primary-foreground">
+      <div className="bg-granito-hero p-6 rounded-lg shadow-elegant text-white">
         <h1 className="text-2xl font-bold mb-2">¡Bienvenido, {user.name}!</h1>
         <p className="opacity-90">
           Gestiona tus créditos y pagos de manera fácil y segura
@@ -63,40 +63,40 @@ export const ClientDashboard = ({ user, onNavigate }: ClientDashboardProps) => {
 
       {/* Tarjetas de resumen */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <Card>
+        <Card className="card-granito-gradient hover-granito-glow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Crédito Activo</CardTitle>
-            <CreditCard className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-granito-green-700">Crédito Activo</CardTitle>
+            <CreditCard className="h-4 w-4 text-granito-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
+            <div className="text-2xl font-bold text-granito-green-800">
               {activeCredit ? '$' + activeCredit.amount.toLocaleString() : 'Sin crédito'}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-granito-green-600">
               {activeCredit ? `${activeCredit.term} meses` : 'No hay crédito activo'}
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="card-granito-gradient hover-granito-glow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Saldo Pendiente</CardTitle>
-            <DollarSign className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-granito-green-700">Saldo Pendiente</CardTitle>
+            <DollarSign className="h-4 w-4 text-granito-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-destructive">
+            <div className="text-2xl font-bold text-red-600">
               ${totalDebt.toLocaleString()}
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-xs text-granito-green-600">
               {activeCredit ? `Pagado: $${activeCredit.totalPaid.toLocaleString()}` : 'Sin deuda'}
             </p>
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="card-granito-gradient hover-granito-glow">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Próximo Pago</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-sm font-medium text-granito-green-700">Próximo Pago</CardTitle>
+            <Calendar className="h-4 w-4 text-granito-green-600" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -171,8 +171,7 @@ export const ClientDashboard = ({ user, onNavigate }: ClientDashboardProps) => {
           <CardContent>
             <Button 
               onClick={() => onNavigate('pagos')} 
-              className="w-full"
-              variant="gradient"
+              className="w-full bg-green-600 hover:bg-green-700 text-white"
             >
               Ir a Pagos
             </Button>
@@ -192,8 +191,7 @@ export const ClientDashboard = ({ user, onNavigate }: ClientDashboardProps) => {
           <CardContent>
             <Button 
               onClick={() => onNavigate('mis-creditos')} 
-              className="w-full"
-              variant="secondary"
+              className="w-full bg-green-600 hover:bg-green-700 text-white"
             >
               Ver Créditos
             </Button>
@@ -203,7 +201,7 @@ export const ClientDashboard = ({ user, onNavigate }: ClientDashboardProps) => {
         <Card className="cursor-pointer hover:shadow-card transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <AlertCircle className="h-5 w-5 text-warning" />
+              <AlertCircle className="h-5 w-5 text-green-600" />
               <span>Certificados</span>
             </CardTitle>
             <CardDescription>
@@ -213,8 +211,7 @@ export const ClientDashboard = ({ user, onNavigate }: ClientDashboardProps) => {
           <CardContent>
             <Button 
               onClick={() => onNavigate('certificados')} 
-              className="w-full"
-              variant="warning"
+              className="w-full bg-green-600 hover:bg-green-700 text-white"
             >
               Generar Certificados
             </Button>

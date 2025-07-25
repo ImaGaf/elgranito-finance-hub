@@ -117,13 +117,13 @@ export const ManagerDashboard = ({ user, onNavigate }: ManagerDashboardProps) =>
         <Card className="cursor-pointer hover:shadow-card transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <CreditCard className="h-5 w-5 text-primary" />
+              <CreditCard className="h-5 w-5 text-green-600" />
               <span>Gestión de Créditos</span>
             </CardTitle>
             <CardDescription>Otorgar, modificar y supervisar créditos</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => onNavigate('creditos')} className="w-full" variant="gradient">
+            <Button onClick={() => onNavigate('creditos')} className="w-full bg-green-600 hover:bg-green-700 text-white">
               Administrar Créditos
             </Button>
           </CardContent>
@@ -132,13 +132,13 @@ export const ManagerDashboard = ({ user, onNavigate }: ManagerDashboardProps) =>
         <Card className="cursor-pointer hover:shadow-card transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <UserPlus className="h-5 w-5 text-success" />
+              <UserPlus className="h-5 w-5 text-green-600" />
               <span>Gestión de Usuarios</span>
             </CardTitle>
             <CardDescription>Registrar asistentes y gestionar accesos</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => onNavigate('usuarios')} className="w-full" variant="secondary">
+            <Button onClick={() => onNavigate('usuarios')} className="w-full bg-green-600 hover:bg-green-700 text-white">
               Gestionar Usuarios
             </Button>
           </CardContent>
@@ -147,13 +147,13 @@ export const ManagerDashboard = ({ user, onNavigate }: ManagerDashboardProps) =>
         <Card className="cursor-pointer hover:shadow-card transition-shadow">
           <CardHeader>
             <CardTitle className="flex items-center space-x-2">
-              <FileText className="h-5 w-5 text-warning" />
+              <FileText className="h-5 w-5 text-green-600" />
               <span>Reportes</span>
             </CardTitle>
             <CardDescription>Generar reportes financieros y de gestión</CardDescription>
           </CardHeader>
           <CardContent>
-            <Button onClick={() => onNavigate('reportes')} className="w-full" variant="warning">
+            <Button onClick={() => onNavigate('reportes')} className="w-full bg-green-600 hover:bg-green-700 text-white">
               Ver Reportes
             </Button>
           </CardContent>
@@ -168,7 +168,7 @@ export const ManagerDashboard = ({ user, onNavigate }: ManagerDashboardProps) =>
             <CardDescription>Pagos recibidos este mes</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="text-3xl font-bold text-success mb-2">
+            <div className="text-3xl font-bold text-green-600 mb-2">
               ${stats.monthlyRevenue.toLocaleString()}
             </div>
             <div className="flex items-center space-x-2 text-sm text-muted-foreground">
@@ -195,7 +195,7 @@ export const ManagerDashboard = ({ user, onNavigate }: ManagerDashboardProps) =>
               </div>
               <div className="flex justify-between items-center">
                 <span className="text-sm">Créditos por vencer</span>
-                <Badge variant="warning">3</Badge>
+                <Badge className="bg-green-100 text-green-800 border-green-200">3</Badge>
               </div>
             </div>
           </CardContent>
