@@ -8,6 +8,12 @@ import { AssistantDashboard } from '@/components/dashboard/AssistantDashboard';
 import { PaymentForm } from '@/components/payments/PaymentForm';
 import { ClientCreditsView } from '@/components/credits/ClientCreditsView';
 import { CertificatesView } from '@/components/certificates/CertificatesView';
+import { DelinquencyReports } from '@/components/reports/DelinquencyReports';
+import { ClientSearch } from '@/components/clients/ClientSearch';
+import { PaymentReports } from '@/components/reports/PaymentReports';
+import { CreditManagement } from '@/components/credits/CreditManagement';
+import { UserManagement } from '@/components/users/UserManagement';
+import { SystemAudit } from '@/components/audit/SystemAudit';
 import { authService, initializeDefaultUsers, User } from '@/lib/auth';
 
 const Index = () => {
@@ -90,85 +96,37 @@ const Index = () => {
 
       case 'creditos':
         if (user.role === 'gerente') {
-          // TODO: Implementar gestión de créditos para gerente
-          return (
-            <div className="text-center py-12">
-              <h2 className="text-2xl font-bold mb-4">Gestión de Créditos</h2>
-              <p className="text-muted-foreground">
-                Gestión de créditos en desarrollo...
-              </p>
-            </div>
-          );
+          return <CreditManagement user={user} />;
         }
         break;
 
       case 'usuarios':
         if (user.role === 'gerente') {
-          // TODO: Implementar gestión de usuarios
-          return (
-            <div className="text-center py-12">
-              <h2 className="text-2xl font-bold mb-4">Gestión de Usuarios</h2>
-              <p className="text-muted-foreground">
-                Gestión de usuarios en desarrollo...
-              </p>
-            </div>
-          );
+          return <UserManagement user={user} />;
         }
         break;
 
       case 'reportes':
-        if (user.role === 'gerente') {
-          // TODO: Implementar reportes para gerente
-          return (
-            <div className="text-center py-12">
-              <h2 className="text-2xl font-bold mb-4">Reportes</h2>
-              <p className="text-muted-foreground">
-                Módulo de reportes en desarrollo...
-              </p>
-            </div>
-          );
+        if (user.role === 'gerente' || user.role === 'asistente') {
+          return <PaymentReports user={user} />;
         }
         break;
 
       case 'reportes-morosidad':
         if (user.role === 'asistente') {
-          // TODO: Implementar reportes de morosidad
-          return (
-            <div className="text-center py-12">
-              <h2 className="text-2xl font-bold mb-4">Reportes de Morosidad</h2>
-              <p className="text-muted-foreground">
-                Reportes de morosidad en desarrollo...
-              </p>
-            </div>
-          );
+          return <DelinquencyReports user={user} />;
         }
         break;
 
       case 'clientes':
         if (user.role === 'asistente' || user.role === 'gerente') {
-          // TODO: Implementar consulta de clientes
-          return (
-            <div className="text-center py-12">
-              <h2 className="text-2xl font-bold mb-4">Consulta de Clientes</h2>
-              <p className="text-muted-foreground">
-                Consulta de clientes en desarrollo...
-              </p>
-            </div>
-          );
+          return <ClientSearch user={user} />;
         }
         break;
 
       case 'auditoria':
         if (user.role === 'gerente') {
-          // TODO: Implementar auditoría
-          return (
-            <div className="text-center py-12">
-              <h2 className="text-2xl font-bold mb-4">Auditoría del Sistema</h2>
-              <p className="text-muted-foreground">
-                Módulo de auditoría en desarrollo...
-              </p>
-            </div>
-          );
+          return <SystemAudit user={user} />;
         }
         break;
 
