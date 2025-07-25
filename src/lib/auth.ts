@@ -126,6 +126,43 @@ if (!passwordRegex.test(userData.password)) {
   // Verificar si está autenticado
   isAuthenticated: (): boolean => {
     return !!localStorage.getItem(CURRENT_USER_KEY);
+  },
+
+  // Obtener todos los usuarios (para gestión)
+  getAllUsers: (): User[] => {
+    const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+    return users.map((user: any) => {
+      const { password, ...userWithoutPassword } = user;
+      return userWithoutPassword;
+    });
+  },
+
+  // Actualizar usuario
+  updateUser: async (userId: string, userData: Partial<User>): Promise<{ success: boolean; message: string }> => {
+    const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+    const userIndex = users.findIndex((user: any) => user.id === userId);
+    
+    if (userIndex === -1) {
+      return { success: false, message: 'Usuario no encontrado' };
+    }
+
+    users[userIndex] = { ...users[userIndex], ...userData };
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    
+    return { success: true, message: 'Usuario actualizado exitosamente' };
+  },
+
+  // Eliminar usuario
+  deleteUser: async (userId: string): Promise<{ success: boolean; message: string }> => {
+    const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+    const filteredUsers = users.filter((user: any) => user.id !== userId);
+    
+    if (filteredUsers.length === users.length) {
+      return { success: false, message: 'Usuario no encontrado' };
+    }
+
+    localStorage.setItem(USERS_KEY, JSON.stringify(filteredUsers));
+    return { success: true, message: 'Usuario eliminado exitosamente' };
   }
 };
 

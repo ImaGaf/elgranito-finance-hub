@@ -69,7 +69,7 @@ export const DelinquencyReports = ({ user }: DelinquencyReportsProps) => {
           overdueAmount: totalOverdue,
           overdueInvoices: overduePayments.length,
           daysOverdue,
-          lastPaymentDate: lastPayment?.paidDate || 'Sin pagos registrados'
+          lastPaymentDate: lastPayment?.date || 'Sin pagos registrados'
         });
       }
     });

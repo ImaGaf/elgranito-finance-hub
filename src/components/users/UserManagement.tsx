@@ -45,8 +45,8 @@ export const UserManagement = ({ user }: UserManagementProps) => {
       email: u.email,
       role: u.role,
       status: 'active', // Por defecto todos activos
-      registrationDate: u.registrationDate || new Date().toISOString().split('T')[0],
-      lastLogin: u.lastLogin
+      registrationDate: new Date(u.createdAt).toISOString().split('T')[0],
+      lastLogin: 'No disponible'
     }));
     setUsers(systemUsers);
   };
@@ -118,11 +118,11 @@ export const UserManagement = ({ user }: UserManagementProps) => {
     }
 
     try {
-      const result = authService.registerAssistant({
+      const result = await authService.registerAssistant({
         name: newUserName.trim(),
         email: newUserEmail.trim(),
         password: newUserPassword
-      });
+      }, user);
 
       if (result.success) {
         toast({

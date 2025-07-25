@@ -11,17 +11,21 @@ export interface Credit {
   totalPaid: number;
   remainingBalance: number;
   paymentHistory: Payment[];
+  createdDate: string;
 }
 
 export interface Payment {
   id: string;
   creditId: string;
+  clientId: string;
   amount: number;
   dueDate: Date;
   paidDate?: Date;
   status: 'pending' | 'paid' | 'overdue';
-  method?: 'card' | 'transfer' | 'cash';
+  method: 'card' | 'transfer' | 'cash' | 'pending';
   transactionId?: string;
+  date: string;
+  installmentNumber?: number;
 }
 
 export interface PaymentFormData {
@@ -69,7 +73,8 @@ export const creditService = {
       status: 'active',
       totalPaid: 0,
       remainingBalance: data.amount,
-      paymentHistory: []
+      paymentHistory: [],
+      createdDate: new Date().toISOString().split('T')[0]
     };
 
     // Generar cuotas
@@ -173,6 +178,26 @@ export const creditService = {
   // Obtener todos los pagos (para reportes)
   getAllPayments: (): Payment[] => {
     return JSON.parse(localStorage.getItem(PAYMENTS_KEY) || '[]');
+  },
+
+  // Obtener todos los clientes (necesario para componentes)
+  getAllClients: () => {
+    const users = JSON.parse(localStorage.getItem('el_granito_users') || '[]');
+    return users.filter((user: any) => user.role === 'cliente');
+  },
+
+  // Agregar crédito
+  addCredit: (credit: any) => {
+    const credits = JSON.parse(localStorage.getItem(CREDITS_KEY) || '[]');
+    credits.push(credit);
+    localStorage.setItem(CREDITS_KEY, JSON.stringify(credits));
+  },
+
+  // Agregar pago
+  addPayment: (payment: any) => {
+    const payments = JSON.parse(localStorage.getItem(PAYMENTS_KEY) || '[]');
+    payments.push(payment);
+    localStorage.setItem(PAYMENTS_KEY, JSON.stringify(payments));
   }
 };
 
@@ -196,9 +221,13 @@ function generatePaymentSchedule(credit: Credit): Payment[] {
     payments.push({
       id: `PAY-${credit.id}-${i + 1}`,
       creditId: credit.id,
+      clientId: credit.clientId,
       amount: credit.monthlyPayment,
       dueDate,
-      status: 'pending'
+      status: 'pending',
+      method: 'pending',
+      date: dueDate.toISOString().split('T')[0],
+      installmentNumber: i + 1
     });
   }
   
@@ -237,7 +266,8 @@ export const initializeMockData = () => {
         status: 'active',
         totalPaid: 18777.76,
         remainingBalance: 31222.24,
-        paymentHistory: []
+        paymentHistory: [],
+        createdDate: '2024-01-15'
       },
       {
         id: 'credit-002',
@@ -251,7 +281,8 @@ export const initializeMockData = () => {
         status: 'active',
         totalPaid: 43500.05,
         remainingBalance: 31499.95,
-        paymentHistory: []
+        paymentHistory: [],
+        createdDate: '2023-06-01'
       },
       {
         id: 'credit-003',
@@ -265,7 +296,8 @@ export const initializeMockData = () => {
         status: 'completed',
         totalPaid: 30000,
         remainingBalance: 0,
-        paymentHistory: []
+        paymentHistory: [],
+        createdDate: '2023-10-01'
       }
     ];
 
@@ -274,40 +306,59 @@ export const initializeMockData = () => {
       {
         id: 'pay-001',
         creditId: 'credit-001',
+        clientId: 'cliente-001',
         amount: 2347.22,
         dueDate: new Date('2024-07-15'),
-        status: 'pending'
+        status: 'pending',
+        method: 'pending',
+        date: '2024-07-15',
+        installmentNumber: 1
       },
       {
         id: 'pay-002',
         creditId: 'credit-001',
+        clientId: 'cliente-001',
         amount: 2347.22,
         dueDate: new Date('2024-08-15'),
-        status: 'pending'
+        status: 'pending',
+        method: 'pending',
+        date: '2024-08-15',
+        installmentNumber: 2
       },
       {
         id: 'pay-003',
         creditId: 'credit-002',
+        clientId: 'cliente-002',
         amount: 2416.67,
         dueDate: new Date('2024-07-01'),
-        status: 'overdue'
+        status: 'overdue',
+        method: 'pending',
+        date: '2024-07-01',
+        installmentNumber: 1
       },
       {
         id: 'pay-004',
         creditId: 'credit-002',
+        clientId: 'cliente-002',
         amount: 2416.67,
         dueDate: new Date('2024-08-01'),
-        status: 'pending'
+        status: 'pending',
+        method: 'pending',
+        date: '2024-08-01',
+        installmentNumber: 2
       },
       {
         id: 'pay-005',
         creditId: 'credit-001',
+        clientId: 'cliente-001',
         amount: 2347.22,
         dueDate: new Date('2024-06-15'),
         paidDate: new Date('2024-06-14'),
         status: 'paid',
         method: 'card',
-        transactionId: 'TRX-1718396400000'
+        transactionId: 'TRX-1718396400000',
+        date: '2024-06-15',
+        installmentNumber: 0
       }
     ];
 
