@@ -163,66 +163,83 @@ if (!passwordRegex.test(userData.password)) {
 
     localStorage.setItem(USERS_KEY, JSON.stringify(filteredUsers));
     return { success: true, message: 'Usuario eliminado exitosamente' };
+  },
+
+  // Resetear contraseña
+  resetPassword: async (email: string, newPassword: string): Promise<{ success: boolean; message: string }> => {
+    const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+    const userIndex = users.findIndex((user: any) => user.email === email);
+    
+    if (userIndex === -1) {
+      return { success: false, message: 'Usuario no encontrado' };
+    }
+
+    // Validar fortaleza de contraseña
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passwordRegex.test(newPassword)) {
+      return { 
+        success: false, 
+        message: 'La contraseña debe tener al menos 8 caracteres, una mayúscula, una minúscula, un número y un carácter especial.' 
+      };
+    }
+
+    users[userIndex].password = newPassword;
+    localStorage.setItem(USERS_KEY, JSON.stringify(users));
+    
+    return { success: true, message: 'Contraseña actualizada exitosamente' };
+  },
+
+  // Verificar si el email existe
+  emailExists: async (email: string): Promise<{ exists: boolean; user?: User }> => {
+    const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
+    const user = users.find((u: any) => u.email === email);
+    
+    if (user) {
+      const { password, ...userWithoutPassword } = user;
+      return { exists: true, user: userWithoutPassword };
+    }
+    
+    return { exists: false };
   }
 };
 
-// Crear usuarios por defecto
+// Crear usuarios por defecto para pruebas
 export const initializeDefaultUsers = () => {
   const users = JSON.parse(localStorage.getItem(USERS_KEY) || '[]');
   
+  // Crear usuarios de prueba si no existen
   if (users.length === 0) {
     const defaultUsers = [
       {
-        id: 'manager-001',
-        name: 'Gerente Principal',
+        id: '1',
+        name: 'Mauricio Taco',
         email: 'gerente@elgranito.com',
         password: 'Gerente123!',
         role: 'gerente',
-        createdAt: new Date()
+        createdAt: new Date().toISOString()
       },
       {
-        id: 'assistant-001',
-        name: 'Ana Martínez',
+        id: '2',
+        name: 'Yolanda Tipan',
         email: 'asistente@elgranito.com',
         password: 'Asistente123!',
         role: 'asistente',
-        createdAt: new Date()
+        createdAt: new Date().toISOString()
       },
       {
-        id: 'cliente-001',
-        name: 'Juan Pérez',
-        email: 'juan.perez@email.com',
+        id: '3',
+        name: 'María Perez',
+        email: 'cliente@elgranito.com',
         password: 'Cliente123!',
         role: 'cliente',
         cedula: '1234567890',
-        telefono: '0987654321',
-        direccion: 'Av. Principal 123',
-        createdAt: new Date()
-      },
-      {
-        id: 'cliente-002',
-        name: 'María González',
-        email: 'maria.gonzalez@email.com',
-        password: 'Cliente123!',
-        role: 'cliente',
-        cedula: '0987654321',
-        telefono: '0912345678',
-        direccion: 'Calle Secundaria 456',
-        createdAt: new Date()
-      },
-      {
-        id: 'cliente-003',
-        name: 'Carlos Silva',
-        email: 'carlos.silva@email.com',
-        password: 'Cliente123!',
-        role: 'cliente',
-        cedula: '1122334455',
-        telefono: '0976543210',
-        direccion: 'Barrio Los Pinos 789',
-        createdAt: new Date()
+        telefono: '0999123456',
+        direccion: 'Av. Principal 123, Quito',
+        createdAt: new Date().toISOString()
       }
     ];
-
+    
     localStorage.setItem(USERS_KEY, JSON.stringify(defaultUsers));
+    console.log('Usuarios de prueba creados:', defaultUsers.map(u => ({ email: u.email, password: u.password, role: u.role })));
   }
 };

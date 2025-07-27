@@ -251,118 +251,12 @@ export const initializeMockData = () => {
   const credits = JSON.parse(localStorage.getItem(CREDITS_KEY) || '[]');
   const payments = JSON.parse(localStorage.getItem(PAYMENTS_KEY) || '[]');
   
+  // No crear datos de prueba - sistema en producción
   if (credits.length === 0) {
-    // Crear créditos de prueba
-    const mockCredits: Credit[] = [
-      {
-        id: 'credit-001',
-        clientId: 'cliente-001',
-        clientName: 'Juan Pérez',
-        amount: 50000,
-        interestRate: 12,
-        term: 24,
-        monthlyPayment: 2347.22,
-        startDate: new Date('2024-01-15'),
-        status: 'active',
-        totalPaid: 18777.76,
-        remainingBalance: 31222.24,
-        paymentHistory: [],
-        createdDate: '2024-01-15'
-      },
-      {
-        id: 'credit-002',
-        clientId: 'cliente-002',
-        clientName: 'María González',
-        amount: 75000,
-        interestRate: 10,
-        term: 36,
-        monthlyPayment: 2416.67,
-        startDate: new Date('2023-06-01'),
-        status: 'active',
-        totalPaid: 43500.05,
-        remainingBalance: 31499.95,
-        paymentHistory: [],
-        createdDate: '2023-06-01'
-      },
-      {
-        id: 'credit-003',
-        clientId: 'cliente-003',
-        clientName: 'Carlos Silva',
-        amount: 30000,
-        interestRate: 15,
-        term: 18,
-        monthlyPayment: 1944.44,
-        startDate: new Date('2023-10-01'),
-        status: 'completed',
-        totalPaid: 30000,
-        remainingBalance: 0,
-        paymentHistory: [],
-        createdDate: '2023-10-01'
-      }
-    ];
-
-    // Crear pagos de prueba
-    const mockPayments: Payment[] = [
-      {
-        id: 'pay-001',
-        creditId: 'credit-001',
-        clientId: 'cliente-001',
-        amount: 2347.22,
-        dueDate: new Date('2024-07-15'),
-        status: 'pending',
-        method: 'pending',
-        date: '2024-07-15',
-        installmentNumber: 1
-      },
-      {
-        id: 'pay-002',
-        creditId: 'credit-001',
-        clientId: 'cliente-001',
-        amount: 2347.22,
-        dueDate: new Date('2024-08-15'),
-        status: 'pending',
-        method: 'pending',
-        date: '2024-08-15',
-        installmentNumber: 2
-      },
-      {
-        id: 'pay-003',
-        creditId: 'credit-002',
-        clientId: 'cliente-002',
-        amount: 2416.67,
-        dueDate: new Date('2024-07-01'),
-        status: 'overdue',
-        method: 'pending',
-        date: '2024-07-01',
-        installmentNumber: 1
-      },
-      {
-        id: 'pay-004',
-        creditId: 'credit-002',
-        clientId: 'cliente-002',
-        amount: 2416.67,
-        dueDate: new Date('2024-08-01'),
-        status: 'pending',
-        method: 'pending',
-        date: '2024-08-01',
-        installmentNumber: 2
-      },
-      {
-        id: 'pay-005',
-        creditId: 'credit-001',
-        clientId: 'cliente-001',
-        amount: 2347.22,
-        dueDate: new Date('2024-06-15'),
-        paidDate: new Date('2024-06-14'),
-        status: 'paid',
-        method: 'card',
-        transactionId: 'TRX-1718396400000',
-        date: '2024-06-15',
-        installmentNumber: 0
-      }
-    ];
-
-    localStorage.setItem(CREDITS_KEY, JSON.stringify(mockCredits));
-    localStorage.setItem(PAYMENTS_KEY, JSON.stringify(mockPayments));
+    localStorage.setItem(CREDITS_KEY, JSON.stringify([]));
+  }
+  
+  if (payments.length === 0) {
+    localStorage.setItem(PAYMENTS_KEY, JSON.stringify([]));
   }
 };

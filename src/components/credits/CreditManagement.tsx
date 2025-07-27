@@ -293,16 +293,7 @@ export const CreditManagement = ({ user }: CreditManagementProps) => {
                       onChange={(e) => setCreditAmount(e.target.value)}
                     />
                   </div>
-                  <div>
-                    <Label htmlFor="term">Plazo (meses)</Label>
-                    <Input
-                      id="term"
-                      type="number"
-                      placeholder="12"
-                      value={creditTerm}
-                      onChange={(e) => setCreditTerm(e.target.value)}
-                    />
-                  </div>
+            
                   <div>
                     <Label htmlFor="interest">Tasa de Interés (%)</Label>
                     <Input
