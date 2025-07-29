@@ -260,69 +260,84 @@ export const CreditManagement = ({ user }: CreditManagementProps) => {
                   Otorgar Crédito
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-md">
-                <DialogHeader>
-                  <DialogTitle>Otorgar Nuevo Crédito</DialogTitle>
-                  <DialogDescription>
-                    Complete la información para otorgar un crédito a un cliente
-                  </DialogDescription>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="client">Cliente</Label>
-                    <Select value={selectedClient} onValueChange={setSelectedClient}>
-                      <SelectTrigger>
-                        <SelectValue placeholder="Seleccionar cliente" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {clients.map((client) => (
-                          <SelectItem key={client.id} value={client.id}>
-                            {client.name} - {client.cedula}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <Label htmlFor="amount">Monto del Crédito</Label>
-                    <Input
-                      id="amount"
-                      type="number"
-                      placeholder="0.00"
-                      value={creditAmount}
-                      onChange={(e) => setCreditAmount(e.target.value)}
-                    />
-                  </div>
-            
-                  <div>
-                    <Label htmlFor="interest">Tasa de Interés (%)</Label>
-                    <Input
-                      id="interest"
-                      type="number"
-                      step="0.1"
-                      value={interestRate}
-                      onChange={(e) => setInterestRate(e.target.value)}
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="observations">Observaciones</Label>
-                    <Textarea
-                      id="observations"
-                      placeholder="Observaciones adicionales..."
-                      value={observations}
-                      onChange={(e) => setObservations(e.target.value)}
-                    />
-                  </div>
-                  <div className="flex gap-2">
-                    <Button onClick={grantCredit} className="flex-1">
-                      Otorgar Crédito
-                    </Button>
-                    <Button variant="outline" onClick={() => setIsGrantingCredit(false)}>
-                      Cancelar
-                    </Button>
-                  </div>
-                </div>
-              </DialogContent>
+<DialogContent className="max-w-md">
+  <DialogHeader>
+    <DialogTitle>Otorgar Nuevo Crédito</DialogTitle>
+    <DialogDescription>
+      Complete la información para otorgar un crédito a un cliente
+    </DialogDescription>
+  </DialogHeader>
+  <div className="space-y-4">
+    <div>
+      <Label htmlFor="client">Cliente</Label>
+      <Select value={selectedClient} onValueChange={setSelectedClient}>
+        <SelectTrigger>
+          <SelectValue placeholder="Seleccionar cliente" />
+        </SelectTrigger>
+        <SelectContent>
+          {clients.map((client) => (
+            <SelectItem key={client.id} value={client.id}>
+              {client.name} - {client.cedula}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+
+    <div>
+      <Label htmlFor="amount">Monto del Crédito</Label>
+      <Input
+        id="amount"
+        type="number"
+        placeholder="0.00"
+        value={creditAmount}
+        onChange={(e) => setCreditAmount(e.target.value)}
+      />
+    </div>
+
+    <div>
+      <Label htmlFor="term">Plazo (meses)</Label>
+      <Input
+        id="term"
+        type="number"
+        placeholder="Ej. 12"
+        value={creditTerm}
+        onChange={(e) => setCreditTerm(e.target.value)}
+      />
+    </div>
+
+    <div>
+      <Label htmlFor="interest">Tasa de Interés (%)</Label>
+      <Input
+        id="interest"
+        type="number"
+        step="0.1"
+        value={interestRate}
+        onChange={(e) => setInterestRate(e.target.value)}
+      />
+    </div>
+
+    <div>
+      <Label htmlFor="observations">Observaciones</Label>
+      <Textarea
+        id="observations"
+        placeholder="Observaciones adicionales..."
+        value={observations}
+        onChange={(e) => setObservations(e.target.value)}
+      />
+    </div>
+
+    <div className="flex gap-2">
+      <Button onClick={grantCredit} className="flex-1">
+        Otorgar Crédito
+      </Button>
+      <Button variant="outline" onClick={() => setIsGrantingCredit(false)}>
+        Cancelar
+      </Button>
+    </div>
+  </div>
+</DialogContent>
+
             </Dialog>
           </div>
         </CardHeader>

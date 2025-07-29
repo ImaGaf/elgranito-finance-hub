@@ -7,10 +7,15 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { Search, FileDown, CalendarIcon, Shield, Activity, Users, AlertTriangle } from 'lucide-react';
+import { Search, FileDown, Calendar as CalendarIcon, Shield, Activity, Users, AlertTriangle, FileSpreadsheet } from 'lucide-react';
 import { format } from 'date-fns';
 import { es } from 'date-fns/locale';
-import { User } from '@/lib/auth';
+
+interface User {
+  id: string;
+  name: string;
+  role: string;
+}
 
 interface SystemAuditProps {
   user: User;
@@ -203,20 +208,204 @@ export const SystemAudit = ({ user }: SystemAuditProps) => {
     setFilteredLogs(filtered);
   };
 
-  const exportAuditReport = (format: 'pdf' | 'xlsx' | 'csv') => {
-    const data = filteredLogs.map(log => ({
-      'Usuario': log.userName,
-      'Acción': log.action,
-      'Módulo': log.module,
-      'Fecha y Hora': log.timestamp,
-      'IP': log.ipAddress,
-      'Estado': log.status === 'success' ? 'Éxito' : 
-                log.status === 'error' ? 'Error' : 'Advertencia',
-      'Detalles': log.details
-    }));
+  // Función para generar PDF usando window.print
+  const generateAuditPDF = () => {
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+      alert('Por favor permite ventanas emergentes para generar el PDF');
+      return;
+    }
 
-    console.log(`Exportando auditoría en formato ${format}:`, data);
-    alert(`Reporte de auditoría exportado en formato ${format.toUpperCase()}`);
+    const stats = getStats();
+
+    const htmlContent = `
+      <!DOCTYPE html>
+      <html>
+      <head>
+        <title>Reporte de Auditoría del Sistema</title>
+        <style>
+          body { font-family: Arial, sans-serif; margin: 20px; color: #333; }
+          .header { background: linear-gradient(135deg, #6366f1, #8b5cf6); color: white; padding: 30px; text-align: center; margin-bottom: 30px; }
+          .header h1 { margin: 0; font-size: 28px; }
+          .header p { margin: 5px 0 0 0; opacity: 0.9; }
+          .stats { display: flex; gap: 15px; margin-bottom: 30px; flex-wrap: wrap; }
+          .stat-box { flex: 1; min-width: 150px; background: #f8fafc; border: 2px solid #e2e8f0; border-radius: 8px; padding: 15px; text-align: center; }
+          .stat-box.primary { border-color: #6366f1; }
+          .stat-box.success { border-color: #10b981; }
+          .stat-box.error { border-color: #ef4444; }
+          .stat-box.warning { border-color: #f59e0b; }
+          .stat-number { font-size: 20px; font-weight: bold; margin-bottom: 5px; }
+          .stat-number.primary { color: #6366f1; }
+          .stat-number.success { color: #10b981; }
+          .stat-number.error { color: #ef4444; }
+          .stat-number.warning { color: #f59e0b; }
+          .stat-label { font-size: 11px; color: #64748b; }
+          table { width: 100%; border-collapse: collapse; margin-top: 20px; font-size: 12px; }
+          th, td { border: 1px solid #e2e8f0; padding: 8px; text-align: left; }
+          th { background-color: #6366f1; color: white; font-weight: bold; }
+          tr:nth-child(even) { background-color: #f8fafc; }
+          .status-success { background: #10b981; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; }
+          .status-error { background: #ef4444; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; }
+          .status-warning { background: #f59e0b; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; }
+          .summary { margin-top: 30px; padding: 20px; background: #f1f5f9; border-radius: 8px; }
+          .footer { margin-top: 40px; padding-top: 20px; border-top: 2px solid #6366f1; text-align: center; color: #64748b; }
+          .details-cell { max-width: 200px; word-wrap: break-word; font-size: 10px; }
+          @media print {
+            .stats { flex-direction: column; }
+            .stat-box { margin-bottom: 10px; }
+          }
+        </style>
+      </head>
+      <body>
+        <div class="header">
+          <h1>🛡️ REPORTE DE AUDITORÍA DEL SISTEMA</h1>
+          <p>Sistema de Gestión de Créditos</p>
+          <p>Fecha: ${new Date().toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+        </div>
+
+        <div class="stats">
+          <div class="stat-box primary">
+            <div class="stat-number primary">${stats.totalLogs}</div>
+            <div class="stat-label">TOTAL REGISTROS</div>
+          </div>
+          <div class="stat-box primary">
+            <div class="stat-number primary">${stats.uniqueUsers}</div>
+            <div class="stat-label">USUARIOS ACTIVOS</div>
+          </div>
+          <div class="stat-box success">
+            <div class="stat-number success">${stats.successLogs}</div>
+            <div class="stat-label">ACCIONES EXITOSAS</div>
+          </div>
+          <div class="stat-box error">
+            <div class="stat-number error">${stats.errorLogs}</div>
+            <div class="stat-label">ERRORES</div>
+          </div>
+          <div class="stat-box warning">
+            <div class="stat-number warning">${stats.warningLogs}</div>
+            <div class="stat-label">ADVERTENCIAS</div>
+          </div>
+        </div>
+
+        <div class="summary">
+          <h3>Resumen del Reporte de Auditoría</h3>
+          <p><strong>Período analizado:</strong> ${startDate && endDate ? 
+            `${format(startDate, 'dd/MM/yyyy', { locale: es })} - ${format(endDate, 'dd/MM/yyyy', { locale: es })}` : 
+            'Todos los registros'}</p>
+          <p><strong>Filtros aplicados:</strong> ${[
+            userFilter !== 'all' ? `Usuario: ${getUniqueUsers().find(u => u.id === userFilter)?.name}` : '',
+            moduleFilter !== 'all' ? `Módulo: ${moduleFilter}` : '',
+            statusFilter !== 'all' ? `Estado: ${statusFilter}` : '',
+            searchTerm ? `Búsqueda: ${searchTerm}` : ''
+          ].filter(Boolean).join(', ') || 'Ninguno'}</p>
+          <p><strong>Total de registros mostrados:</strong> ${filteredLogs.length}</p>
+        </div>
+
+        <h2>📋 Detalle de Registros de Auditoría</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Usuario</th>
+              <th>Acción</th>
+              <th>Módulo</th>
+              <th>Fecha y Hora</th>
+              <th>IP</th>
+              <th>Estado</th>
+              <th>Detalles</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${filteredLogs.map(log => `
+              <tr>
+                <td>${log.userName}</td>
+                <td>${log.action}</td>
+                <td>${log.module}</td>
+                <td>${log.timestamp}</td>
+                <td style="font-family: monospace; font-size: 10px;">${log.ipAddress}</td>
+                <td>
+                  <span class="status-${log.status}">
+                    ${log.status === 'success' ? 'Éxito' : log.status === 'error' ? 'Error' : 'Advertencia'}
+                  </span>
+                </td>
+                <td class="details-cell">${log.details}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+
+        <div class="footer">
+          <p>Documento generado automáticamente - ${new Date().toLocaleString('es-ES')}</p>
+          <p>Sistema de Gestión de Créditos - Reporte de Auditoría</p>
+        </div>
+
+        <script>
+          window.onload = function() {
+            setTimeout(function() {
+              window.print();
+              setTimeout(function() {
+                window.close();
+              }, 100);
+            }, 500);
+          }
+        </script>
+      </body>
+      </html>
+    `;
+
+    printWindow.document.write(htmlContent);
+    printWindow.document.close();
+  };
+
+  // Función para exportar a Excel (CSV mejorado)
+  const exportAuditToExcel = () => {
+    const headers = [
+      'Usuario',
+      'Acción',
+      'Módulo',
+      'Fecha y Hora',
+      'Dirección IP',
+      'Estado',
+      'Detalles'
+    ];
+
+    const csvRows = [
+      headers.join(','),
+      ...filteredLogs.map(log => [
+        `"${log.userName}"`,
+        `"${log.action}"`,
+        `"${log.module}"`,
+        `"${log.timestamp}"`,
+        `"${log.ipAddress}"`,
+        `"${log.status === 'success' ? 'Éxito' : log.status === 'error' ? 'Error' : 'Advertencia'}"`,
+        `"${log.details.replace(/"/g, '""')}"`
+      ].join(','))
+    ];
+
+    // Agregar resumen al final
+    const stats = getStats();
+    csvRows.push('');
+    csvRows.push('RESUMEN DEL REPORTE DE AUDITORÍA');
+    csvRows.push(`Total de Registros,${stats.totalLogs}`);
+    csvRows.push(`Usuarios Activos,${stats.uniqueUsers}`);
+    csvRows.push(`Acciones Exitosas,${stats.successLogs}`);
+    csvRows.push(`Errores,${stats.errorLogs}`);
+    csvRows.push(`Advertencias,${stats.warningLogs}`);
+    csvRows.push(`Fecha de Generación,"${new Date().toLocaleDateString('es-ES')}"`);
+    csvRows.push(`Período Analizado,"${startDate && endDate ? 
+      `${format(startDate, 'dd/MM/yyyy', { locale: es })} - ${format(endDate, 'dd/MM/yyyy', { locale: es })}` : 
+      'Todos los registros'}"`);
+
+    const csvContent = csvRows.join('\n');
+    
+    // Crear y descargar el archivo
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    const url = URL.createObjectURL(blob);
+    link.setAttribute('href', url);
+    link.setAttribute('download', `reporte-auditoria-${new Date().toISOString().split('T')[0]}.csv`);
+    link.style.visibility = 'hidden';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const getUniqueUsers = () => {
@@ -246,8 +435,8 @@ export const SystemAudit = ({ user }: SystemAuditProps) => {
 
   return (
     <div className="space-y-6">
-      <div className="bg-gradient-hero p-6 rounded-lg shadow-glow text-primary-foreground">
-        <h1 className="text-2xl font-bold mb-2">Auditoría del Sistema</h1>
+      <div className="bg-gradient-to-r from-indigo-600 to-purple-600 p-6 rounded-lg shadow-lg text-white">
+        <h1 className="text-2xl font-bold mb-2">🛡️ Auditoría del Sistema</h1>
         <p className="opacity-90">Registro detallado de todas las acciones realizadas en el sistema</p>
       </div>
 
@@ -265,40 +454,40 @@ export const SystemAudit = ({ user }: SystemAuditProps) => {
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Usuarios Activos</CardTitle>
-            <Users className="h-4 w-4 text-primary" />
+            <Users className="h-4 w-4 text-blue-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-primary">{stats.uniqueUsers}</div>
+            <div className="text-2xl font-bold text-blue-600">{stats.uniqueUsers}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Acciones Exitosas</CardTitle>
-            <Shield className="h-4 w-4 text-success" />
+            <Shield className="h-4 w-4 text-green-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-success">{stats.successLogs}</div>
+            <div className="text-2xl font-bold text-green-600">{stats.successLogs}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Errores</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-destructive" />
+            <AlertTriangle className="h-4 w-4 text-red-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-destructive">{stats.errorLogs}</div>
+            <div className="text-2xl font-bold text-red-600">{stats.errorLogs}</div>
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Advertencias</CardTitle>
-            <AlertTriangle className="h-4 w-4 text-warning" />
+            <AlertTriangle className="h-4 w-4 text-yellow-600" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold text-warning">{stats.warningLogs}</div>
+            <div className="text-2xl font-bold text-yellow-600">{stats.warningLogs}</div>
           </CardContent>
         </Card>
       </div>
@@ -400,17 +589,23 @@ export const SystemAudit = ({ user }: SystemAuditProps) => {
           </div>
 
           <div className="flex gap-2">
-            <Button variant="outline" size="sm" onClick={() => exportAuditReport('pdf')}>
-              <FileDown className="h-4 w-4 mr-2" />
+            <Button 
+              variant="default" 
+              size="sm" 
+              onClick={generateAuditPDF}
+              className="flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700"
+            >
+              <FileDown className="h-4 w-4" />
               Exportar PDF
             </Button>
-            <Button variant="outline" size="sm" onClick={() => exportAuditReport('xlsx')}>
-              <FileDown className="h-4 w-4 mr-2" />
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={exportAuditToExcel}
+              className="flex items-center gap-2"
+            >
+              <FileSpreadsheet className="h-4 w-4" />
               Exportar Excel
-            </Button>
-            <Button variant="outline" size="sm" onClick={() => exportAuditReport('csv')}>
-              <FileDown className="h-4 w-4 mr-2" />
-              Exportar CSV
             </Button>
           </div>
         </CardContent>
@@ -448,8 +643,12 @@ export const SystemAudit = ({ user }: SystemAuditProps) => {
                     <TableCell>
                       <Badge 
                         variant={
-                          log.status === 'success' ? 'success' : 
-                          log.status === 'error' ? 'destructive' : 'warning'
+                          log.status === 'success' ? 'default' : 
+                          log.status === 'error' ? 'destructive' : 'outline'
+                        }
+                        className={
+                          log.status === 'success' ? 'bg-green-500 hover:bg-green-600' : 
+                          log.status === 'warning' ? 'bg-yellow-500 hover:bg-yellow-600 text-white' : ''
                         }
                       >
                         {log.status === 'success' ? 'Éxito' : 
