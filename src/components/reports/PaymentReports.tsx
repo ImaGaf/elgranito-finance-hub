@@ -26,6 +26,8 @@ interface PaymentReport {
   amount: number;
   method: string;
   status: string;
+    plazoMeses?: number;      // <-- agrega esto
+  interesMora?: number; 
 }
 
 export const PaymentReports = ({ user }: PaymentReportsProps) => {

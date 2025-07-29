@@ -29,25 +29,62 @@ interface ClientData {
 
 export const ClientSearch = ({ user }: ClientSearchProps) => {
   const [searchTerm, setSearchTerm] = useState('');
+  const [clientesBase, setClientesBase] = useState<ClientData[]>([]);
   const [searchResults, setSearchResults] = useState<ClientData[]>([]);
   const [selectedClient, setSelectedClient] = useState<ClientData | null>(null);
   const [isSearching, setIsSearching] = useState(false);
 
+  useEffect(() => {
+    const mockClients: ClientData[] = [
+      {
+        id: '1',
+        name: 'Ana Torres',
+        cedula: '0102030405',
+        email: 'ana@example.com',
+        phone: '0999999999',
+        address: 'Calle Falsa 123',
+        status: 'active',
+        registrationDate: '2023-05-12',
+        totalCredits: 2,
+        activeCredits: 1,
+        totalPayments: 5,
+        lastPaymentDate: '2024-11-10',
+      },
+      {
+        id: '2',
+        name: 'Carlos Pérez',
+        cedula: '1122334455',
+        email: 'carlos@example.com',
+        phone: '0988888888',
+        address: 'Av. Siempre Viva 742',
+        status: 'inactive',
+        registrationDate: '2022-03-01',
+        totalCredits: 3,
+        activeCredits: 0,
+        totalPayments: 10,
+        lastPaymentDate: '2024-12-01',
+      },
+    ];
+
+    setClientesBase(mockClients);
+    setSearchResults(mockClients); // Mostrarlos al inicio
+  }, []);
+
   const searchClients = async () => {
     if (!searchTerm.trim()) {
-      setSearchResults([]);
+      setSearchResults(clientesBase); // ← muestra todos los mock
       return;
     }
 
     setIsSearching(true);
-    
+
     // Simular búsqueda con datos mock
     const allClients = creditService.getAllClients();
     const payments = creditService.getAllPayments();
     const credits = creditService.getAllCredits();
 
     const results = allClients
-      .filter(client => 
+      .filter(client =>
         client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
         client.cedula.includes(searchTerm) ||
         client.email.toLowerCase().includes(searchTerm.toLowerCase())
@@ -94,6 +131,13 @@ export const ClientSearch = ({ user }: ClientSearchProps) => {
     const payments = creditService.getAllPayments().filter(p => p.clientId === clientId);
     return payments.sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   };
+
+  // --- Arreglo de pagos quemados definido UNA vez aquí ---
+  const pagosQuemados = [
+    { id: 'PAY-001', installmentNumber: 1, date: '2024-11-01', amount: 100, status: 'paid', method: 'card' },
+    { id: 'PAY-002', installmentNumber: 2, date: '2024-12-01', amount: 150, status: 'pending', method: 'cash' },
+    { id: 'PAY-003', installmentNumber: 3, date: '2025-01-01', amount: 120, status: 'overdue', method: 'transfer' },
+  ];
 
   return (
     <div className="space-y-6">
@@ -198,16 +242,31 @@ export const ClientSearch = ({ user }: ClientSearchProps) => {
                   <CreditCard className="h-4 w-4" />
                   Resumen Financiero
                 </h4>
-                <div className="space-y-2 text-sm">
-                  <div><strong>Total Créditos:</strong> {selectedClient.totalCredits}</div>
-                  <div><strong>Créditos Activos:</strong> {selectedClient.activeCredits}</div>
-                  <div><strong>Total Pagos Realizados:</strong> {selectedClient.totalPayments}</div>
-                  <div><strong>Último Pago:</strong> {selectedClient.lastPaymentDate}</div>
-                  <div>
-                    <strong>Estado:</strong> 
-                    <Badge variant={selectedClient.status === 'active' ? 'success' : 'secondary'} className="ml-2">
-                      {selectedClient.status === 'active' ? 'Activo' : 'Inactivo'}
-                    </Badge>
+                <div className="space-y-4">
+                  <h4 className="font-semibold flex items-center gap-2">
+                    <CreditCard className="h-4 w-4" />
+                    Resumen Financiero
+                  </h4>
+                  <div className="space-y-2 text-sm">
+                    <div><strong>Total Créditos:</strong> {selectedClient.totalCredits}</div>
+                    <div><strong>Créditos Activos:</strong> {selectedClient.activeCredits}</div>
+                    <div><strong>Total Pagos Realizados:</strong> {selectedClient.totalPayments}</div>
+                    <div><strong>Último Pago:</strong> {selectedClient.lastPaymentDate}</div>
+                    <div>
+                      <strong>Estado:</strong>
+                      <Badge variant={selectedClient.status === 'active' ? 'success' : 'secondary'} className="ml-2">
+                        {selectedClient.status === 'active' ? 'Activo' : 'Inactivo'}
+                      </Badge>
+                    </div>
+
+                    {/* Créditos activos con monto, plazo y saldo */}
+                    {creditService.getClientCredits(selectedClient.id).filter(c => c.status === 'active').map((credit, index) => (
+                      <div key={index} className="pt-2 border-t border-muted space-y-1">
+                        <div><strong>Monto del Crédito:</strong> ${credit.amount}</div>
+                        <div><strong>Plazo Otorgado:</strong> {credit.term} meses</div>
+                        <div><strong>Saldo Restante:</strong> ${credit.remainingBalance.toFixed(2)}</div>
+                      </div>
+                    ))}
                   </div>
                 </div>
               </div>
@@ -222,31 +281,48 @@ export const ClientSearch = ({ user }: ClientSearchProps) => {
                 <Table>
                   <TableHeader>
                     <TableRow>
+                      <TableHead>N° Factura</TableHead>
+                      <TableHead>Cuota</TableHead>
                       <TableHead>Fecha</TableHead>
                       <TableHead>Monto</TableHead>
+                      <TableHead>Interés</TableHead>
                       <TableHead>Estado</TableHead>
                       <TableHead>Método</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {getPaymentHistory(selectedClient.id).slice(0, 5).map((payment) => (
-                      <TableRow key={payment.id}>
-                        <TableCell>{payment.date}</TableCell>
-                        <TableCell>${payment.amount.toFixed(2)}</TableCell>
-                        <TableCell>
-                          <Badge 
-                            variant={
-                              payment.status === 'paid' ? 'success' : 
-                              payment.status === 'pending' ? 'warning' : 'destructive'
-                            }
-                          >
-                            {payment.status === 'paid' ? 'Pagado' : 
-                             payment.status === 'pending' ? 'Pendiente' : 'Vencido'}
-                          </Badge>
-                        </TableCell>
-                        <TableCell>{payment.method}</TableCell>
-                      </TableRow>
-                    ))}
+                    {pagosQuemados.map((payment) => {
+                      const isOverdue = payment.status === 'overdue';
+                      const interest = isOverdue ? (payment.amount * 0.05).toFixed(2) : '0.00';
+
+                      return (
+                        <TableRow key={payment.id}>
+                          <TableCell>{payment.id}</TableCell>
+                          <TableCell>{payment.installmentNumber ?? '-'}</TableCell>
+                          <TableCell>{payment.date}</TableCell>
+                          <TableCell>${payment.amount.toFixed(2)}</TableCell>
+                          <TableCell>${interest}</TableCell>
+                          <TableCell>
+                            <Badge
+                              variant={
+                                payment.status === 'paid'
+                                  ? 'success'
+                                  : payment.status === 'pending'
+                                  ? 'warning'
+                                  : 'destructive'
+                              }
+                            >
+                              {payment.status === 'paid'
+                                ? 'Pagado'
+                                : payment.status === 'pending'
+                                ? 'Pendiente'
+                                : 'Vencido'}
+                            </Badge>
+                          </TableCell>
+                          <TableCell>{payment.method}</TableCell>
+                        </TableRow>
+                      );
+                    })}
                   </TableBody>
                 </Table>
               </div>

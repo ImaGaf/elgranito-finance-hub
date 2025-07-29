@@ -5,12 +5,6 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { AlertTriangle, FileDown, Search, Users } from 'lucide-react';
-import { creditService } from '@/lib/credits';
-import { User } from '@/lib/auth';
-
-interface DelinquencyReportsProps {
-  user: User;
-}
 
 interface DelinquencyClient {
   id: string;
@@ -23,59 +17,55 @@ interface DelinquencyClient {
   lastPaymentDate: string;
 }
 
-export const DelinquencyReports = ({ user }: DelinquencyReportsProps) => {
+export const DelinquencyReports = () => {
+  // Datos quemados (hardcoded)
+  const clientesHardcoded: DelinquencyClient[] = [
+    {
+      id: '1',
+      name: 'Juan Pérez',
+      cedula: '0102030405',
+      email: 'juan.perez@email.com',
+      overdueAmount: 350.75,
+      overdueInvoices: 3,
+      daysOverdue: 20,
+      lastPaymentDate: '2025-06-10',
+    },
+    {
+      id: '2',
+      name: 'María Gómez',
+      cedula: '0203040506',
+      email: 'maria.gomez@email.com',
+      overdueAmount: 1200.00,
+      overdueInvoices: 5,
+      daysOverdue: 35,
+      lastPaymentDate: '2025-05-01',
+    },
+    {
+      id: '3',
+      name: 'Carlos Ruiz',
+      cedula: '0304050607',
+      email: 'carlos.ruiz@email.com',
+      overdueAmount: 0,
+      overdueInvoices: 0,
+      daysOverdue: 0,
+      lastPaymentDate: '2025-07-10',
+    },
+  ];
+
   const [delinquencyData, setDelinquencyData] = useState<DelinquencyClient[]>([]);
   const [filteredData, setFilteredData] = useState<DelinquencyClient[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [amountFilter, setAmountFilter] = useState('');
 
   useEffect(() => {
-    loadDelinquencyData();
+    // Solo cargar clientes con deuda (overdueAmount > 0)
+    const clientesConMora = clientesHardcoded.filter(c => c.overdueAmount > 0);
+    setDelinquencyData(clientesConMora);
   }, []);
 
   useEffect(() => {
     filterData();
   }, [delinquencyData, searchTerm, amountFilter]);
-
-  const loadDelinquencyData = () => {
-    const payments = creditService.getAllPayments();
-    const clients = creditService.getAllClients();
-    
-    const delinquencyClients: DelinquencyClient[] = [];
-    
-    clients.forEach(client => {
-      const clientPayments = payments.filter(p => p.clientId === client.id);
-      const overduePayments = clientPayments.filter(p => p.status === 'overdue');
-      
-      if (overduePayments.length > 0) {
-        const totalOverdue = overduePayments.reduce((sum, p) => sum + p.amount, 0);
-        const oldestPayment = overduePayments.sort((a, b) => 
-          new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime()
-        )[0];
-        
-        const daysOverdue = Math.floor(
-          (new Date().getTime() - new Date(oldestPayment.dueDate).getTime()) / (1000 * 60 * 60 * 24)
-        );
-        
-        const lastPayment = clientPayments
-          .filter(p => p.status === 'paid')
-          .sort((a, b) => new Date(b.paidDate || '').getTime() - new Date(a.paidDate || '').getTime())[0];
-
-        delinquencyClients.push({
-          id: client.id,
-          name: client.name,
-          cedula: client.cedula,
-          email: client.email,
-          overdueAmount: totalOverdue,
-          overdueInvoices: overduePayments.length,
-          daysOverdue,
-          lastPaymentDate: lastPayment?.date || 'Sin pagos registrados'
-        });
-      }
-    });
-
-    setDelinquencyData(delinquencyClients);
-  };
 
   const filterData = () => {
     let filtered = delinquencyData;
@@ -90,7 +80,9 @@ export const DelinquencyReports = ({ user }: DelinquencyReportsProps) => {
 
     if (amountFilter) {
       const amount = parseFloat(amountFilter);
-      filtered = filtered.filter(client => client.overdueAmount >= amount);
+      if (!isNaN(amount)) {
+        filtered = filtered.filter(client => client.overdueAmount >= amount);
+      }
     }
 
     setFilteredData(filtered);
@@ -103,15 +95,14 @@ export const DelinquencyReports = ({ user }: DelinquencyReportsProps) => {
   };
 
   const exportReport = (format: 'pdf' | 'xlsx' | 'csv') => {
-    // Simular exportación
     const data = filteredData.map(client => ({
       'Nombre': client.name,
       'Cédula/RUC': client.cedula,
       'Correo': client.email,
       'Monto Adeudado': `$${client.overdueAmount.toFixed(2)}`,
       'Facturas Vencidas': client.overdueInvoices,
-      'Días de Mora': client.daysOverdue,
-      'Último Pago': client.lastPaymentDate
+      'Días en Mora': client.daysOverdue,
+      'Último Pago': client.lastPaymentDate,
     }));
 
     console.log(`Exportando reporte de morosidad en formato ${format}:`, data);

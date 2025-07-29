@@ -1,3 +1,5 @@
+
+import { ClientSearch } from '@/components/clients/ClientSearch';
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -42,23 +44,28 @@ export const AssistantDashboard = ({ user, onNavigate }: AssistantDashboardProps
     });
   };
 
-  return (
-    <div className="min-h-screen bg-white">
-      {/* Fondo animado */}
-      <div className="fixed inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute -top-40 -right-40 w-80 h-80 bg-green-500/10 rounded-full animate-float"></div>
-        <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-green-600/5 rounded-full animate-float" style={{ animationDelay: '1s' }}></div>
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-green-400/5 rounded-full animate-glow-pulse"></div>
+return (
+  <div className="min-h-screen bg-white">
+    {/* Fondo animado */}
+    <div className="fixed inset-0 overflow-hidden pointer-events-none">
+      <div className="absolute -top-40 -right-40 w-80 h-80 bg-green-500/10 rounded-full animate-float"></div>
+      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-green-600/5 rounded-full animate-float" style={{ animationDelay: '1s' }}></div>
+      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-64 h-64 bg-green-400/5 rounded-full animate-glow-pulse"></div>
+    </div>
+
+    <div className="relative z-10 space-y-6">
+      {/* Encabezado */}
+      <div className="bg-gradient-hero p-6 rounded-lg shadow-glow text-primary-foreground animate-slide-in-left">
+        <h1 className="text-2xl font-bold mb-2">Panel de Asistente</h1>
+        <p className="opacity-90">Bienvenido, {user.name}. Gestiona consultas de clientes y reportes de morosidad.</p>
       </div>
 
-      <div className="relative z-10 space-y-6">
-        {/* Encabezado */}
-        <div className="bg-gradient-hero p-6 rounded-lg shadow-glow text-primary-foreground animate-slide-in-left">
-          <h1 className="text-2xl font-bold mb-2">Panel de Asistente</h1>
-          <p className="opacity-90">Bienvenido, {user.name}. Gestiona consultas de clientes y reportes de morosidad.</p>
-        </div>
+      {/* Buscador de clientes */}
+      <div className="p-6 bg-gray-50 rounded-lg shadow mb-6">
+        <ClientSearch user={user} />
+      </div>
 
-        {/* Métricas del día */}
+      {/* Métricas del día */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 animate-slide-in">
           <Card className="hover:shadow-lg transition-all duration-300 animate-scale-in border-green-100" style={{ animationDelay: '0.1s' }}>
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
