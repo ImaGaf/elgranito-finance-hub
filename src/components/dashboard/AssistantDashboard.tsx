@@ -192,48 +192,60 @@ return (
           </div>
 
           {/* Lista de tareas pendientes */}
-          <Card className="hover:shadow-lg transition-all duration-300 border-green-100 animate-fade-in" style={{ animationDelay: '0.9s' }}>
-            <CardHeader>
-              <CardTitle>Tareas Pendientes</CardTitle>
-              <CardDescription>Actividades programadas para hoy</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 border border-green-200 rounded-lg hover:bg-green-50 transition-colors duration-200 animate-slide-in-left" style={{ animationDelay: '1s' }}>
-                  <div className="flex items-center space-x-3">
-                    <Clock className="h-4 w-4 text-green-600" />
-                    <div>
-                      <p className="font-medium">Contactar a María González</p>
-                      <p className="text-sm text-gray-600">Pago vencido desde hace 3 días</p>
-                    </div>
-                  </div>
-                  <Badge className="bg-red-100 text-red-800 border-red-200">Urgente</Badge>
-                </div>
+ <Card className="hover:shadow-lg transition-all duration-300 border-green-100 animate-fade-in" style={{ animationDelay: '0.9s' }}>
+  <CardHeader>
+    <CardTitle>Tareas Pendientes</CardTitle>
+    <CardDescription>Actividades programadas para hoy</CardDescription>
+  </CardHeader>
+  <CardContent>
+    <div className="space-y-3">
+      {/* Tarea 1: Contactar a María González */}
+      <div className="flex flex-col p-3 border border-green-200 rounded-lg hover:bg-green-50 transition-colors duration-200 animate-slide-in-left" style={{ animationDelay: '1s' }}>
+        <div className="flex items-center space-x-3 mb-2">
+          <Clock className="h-4 w-4 text-green-600" />
+          <div>
+            <p className="font-medium">Contactar a María González</p>
+            <p className="text-sm text-gray-600">Pago vencido desde hace 3 días</p>
+          </div>
+          <Badge className="ml-auto bg-red-100 text-red-800 border-red-200">Urgente</Badge>
+        </div>
+        <div className="pl-7 text-sm text-gray-700">
+          <p>📞 <strong>Teléfono:</strong> 0991234567</p>
+          <p>🏠 <strong>Dirección:</strong> Calle los Cipreses #123, Quito</p>
+        </div>
+      </div>
 
-                <div className="flex items-center justify-between p-3 border border-green-200 rounded-lg hover:bg-green-50 transition-colors duration-200 animate-slide-in-left" style={{ animationDelay: '1.1s' }}>
-                  <div className="flex items-center space-x-3">
-                    <Phone className="h-4 w-4 text-green-600" />
-                    <div>
-                      <p className="font-medium">Seguimiento Luis Rodríguez</p>
-                      <p className="text-sm text-gray-600">Recordatorio de pago próximo</p>
-                    </div>
-                  </div>
-                  <Badge variant="outline">Programado</Badge>
-                </div>
+      {/* Tarea 2: Seguimiento Luis Rodríguez */}
+      <div className="flex flex-col p-3 border border-green-200 rounded-lg hover:bg-green-50 transition-colors duration-200 animate-slide-in-left" style={{ animationDelay: '1.1s' }}>
+        <div className="flex items-center space-x-3 mb-2">
+          <Phone className="h-4 w-4 text-green-600" />
+          <div>
+            <p className="font-medium">Seguimiento Luis Rodríguez</p>
+            <p className="text-sm text-gray-600">Recordatorio de pago próximo</p>
+          </div>
+          <Badge variant="outline" className="ml-auto">Programado</Badge>
+        </div>
+        <div className="pl-7 text-sm text-gray-700">
+          <p>📞 <strong>Teléfono:</strong> 0987654321</p>
+          <p>🏠 <strong>Dirección:</strong> Av. Amazonas y Colón, Quito</p>
+        </div>
+      </div>
 
-                <div className="flex items-center justify-between p-3 border border-green-200 rounded-lg hover:bg-green-50 transition-colors duration-200 animate-slide-in-left" style={{ animationDelay: '1.2s' }}>
-                  <div className="flex items-center space-x-3">
-                    <FileText className="h-4 w-4 text-green-600" />
-                    <div>
-                      <p className="font-medium">Generar reporte mensual</p>
-                      <p className="text-sm text-gray-600">Reporte de morosidad de agosto</p>
-                    </div>
-                  </div>
-                  <Badge variant="secondary">En curso</Badge>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+      {/* Tarea 3: Generar reporte mensual */}
+      <div className="flex flex-col p-3 border border-green-200 rounded-lg hover:bg-green-50 transition-colors duration-200 animate-slide-in-left" style={{ animationDelay: '1.2s' }}>
+        <div className="flex items-center space-x-3 mb-2">
+          <FileText className="h-4 w-4 text-green-600" />
+          <div>
+            <p className="font-medium">Generar reporte mensual</p>
+            <p className="text-sm text-gray-600">Reporte de morosidad de julio</p>
+          </div>
+          <Badge variant="secondary" className="ml-auto">En curso</Badge>
+        </div>
+        {/* Este no es de cliente, así que no añadimos contacto */}
+      </div>
+    </div>
+  </CardContent>
+</Card>
 
           {/* Alertas de morosidad */}
           <Card className="hover:shadow-lg transition-all duration-300 border-green-100 animate-fade-in" style={{ animationDelay: '1.3s' }}>

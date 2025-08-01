@@ -4,20 +4,23 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { AlertTriangle, FileDown, Search, Users, Download, FileSpreadsheet } from 'lucide-react';
+import { AlertTriangle, FileDown, Search, Users, Download, FileSpreadsheet, Mail, MessageCircle, MapPin, Send } from 'lucide-react';
 
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
 // Logo mejorado en base64 (puedes reemplazarlo por tu logo real)
 const logoBase64 =
-  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAYAAADa4j0PAAAACXBIWXMAAAsTAAALEwEAmpwYAAAGnklEQVR4nO2da4hcVRjHf5PEJjGJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiX/wP1VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVrAAEidJhKAAAAAElFTkSuQmCC';
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAJYAAACWCAYAAADa4j0PAAAACXBIWXMAAAsTAAALEwEAmpwYAAAGnklEQVR4nO2da4hcVRjHf5PEJjGJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiYmJiX/wP1VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVrAAEidJhKAAAAAElFTkSuQmCC';
 
 interface DelinquencyClient {
   id: string;
   name: string;
   cedula: string;
   email: string;
+  phone: string;
+  address: string;
+  city: string;
   overdueAmount: number;
   overdueInvoices: number;
   daysOverdue: number;
@@ -36,6 +39,9 @@ const exportToExcel = (data: DelinquencyClient[], filename: string = 'reporte-mo
   const headers = [
     'Cliente',
     'Correo Electrónico',
+    'Teléfono',
+    'Dirección',
+    'Ciudad',
     'Cédula/RUC',
     'Monto Adeudado (USD)',
     'Facturas Vencidas',
@@ -57,6 +63,9 @@ const exportToExcel = (data: DelinquencyClient[], filename: string = 'reporte-mo
     ...data.map(client => [
       `"${client.name}"`,
       `"${client.email}"`,
+      `"${client.phone}"`,
+      `"${client.address}"`,
+      `"${client.city}"`,
       client.cedula,
       client.overdueAmount.toFixed(2),
       client.overdueInvoices,
@@ -89,6 +98,9 @@ export const DelinquencyReports = () => {
       name: 'Juan Pérez García',
       cedula: '0102030405',
       email: 'juan.perez@email.com',
+      phone: '+593 99 123 4567',
+      address: 'Av. Amazonas N24-03 y Colón',
+      city: 'Quito',
       overdueAmount: 350.75,
       overdueInvoices: 3,
       daysOverdue: 20,
@@ -100,6 +112,9 @@ export const DelinquencyReports = () => {
       name: 'María Elena Gómez',
       cedula: '0203040506',
       email: 'maria.gomez@email.com',
+      phone: '+593 98 765 4321',
+      address: 'Calle Larga 12-85 y Benigno Malo',
+      city: 'Cuenca',
       overdueAmount: 1200.0,
       overdueInvoices: 5,
       daysOverdue: 65,
@@ -111,6 +126,9 @@ export const DelinquencyReports = () => {
       name: 'Carlos Alberto Ruiz',
       cedula: '0304050607',
       email: 'carlos.ruiz@email.com',
+      phone: '+593 97 456 7890',
+      address: 'Av. 9 de Octubre 1234',
+      city: 'Guayaquil',
       overdueAmount: 0,
       overdueInvoices: 0,
       daysOverdue: 0,
@@ -122,6 +140,9 @@ export const DelinquencyReports = () => {
       name: 'Ana Lucía Morales',
       cedula: '0405060708',
       email: 'ana.morales@email.com',
+      phone: '+593 96 321 9876',
+      address: 'Rocafuerte 456 y Bolívar',
+      city: 'Machala',
       overdueAmount: 2500.50,
       overdueInvoices: 8,
       daysOverdue: 45,
@@ -133,6 +154,9 @@ export const DelinquencyReports = () => {
       name: 'Roberto Silva Mendoza',
       cedula: '1234567890001',
       email: 'roberto.silva@empresa.com',
+      phone: '+593 95 654 3210',
+      address: 'Av. Eloy Alfaro 789',
+      city: 'Ambato',
       overdueAmount: 750.25,
       overdueInvoices: 2,
       daysOverdue: 12,
@@ -158,7 +182,9 @@ export const DelinquencyReports = () => {
         (client) =>
           client.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
           client.cedula.includes(searchTerm) ||
-          client.email.toLowerCase().includes(searchTerm.toLowerCase())
+          client.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          client.phone.includes(searchTerm) ||
+          client.city.toLowerCase().includes(searchTerm.toLowerCase())
       );
     }
 
@@ -176,6 +202,71 @@ export const DelinquencyReports = () => {
     if (daysOverdue >= 30) return { level: 'Crítico', variant: 'destructive' as const };
     if (daysOverdue >= 15) return { level: 'Alto', variant: 'warning' as const };
     return { level: 'Medio', variant: 'outline' as const };
+  };
+
+  // Función para enviar notificación al cliente
+  const sendNotification = (client: DelinquencyClient) => {
+    const mensaje = `Estimado/a ${client.name},\n\nLe recordamos que tiene una deuda pendiente de $${client.overdueAmount.toFixed(2)} con ${client.daysOverdue} días de vencimiento.\n\nFacturas vencidas: ${client.overdueInvoices}\nInterés acumulado: $${(client.interesCalculado ?? 0).toFixed(2)}\n\nPor favor, contacte con nosotros para regularizar su situación.\n\nSaludos cordiales,\nDepartamento de Cobranzas`;
+
+    // Limpiar el número de teléfono para WhatsApp (quitar espacios y caracteres especiales)
+    const phoneClean = client.phone.replace(/\D/g, '');
+    
+    // URLs para diferentes canales de comunicación
+    const emailUrl = `mailto:${client.email}?subject=Recordatorio de Pago Pendiente&body=${encodeURIComponent(mensaje)}`;
+    const whatsappUrl = `https://wa.me/${phoneClean}?text=${encodeURIComponent(mensaje)}`;
+    const smsUrl = `sms:${client.phone}?body=${encodeURIComponent(mensaje)}`;
+
+    // Mostrar modal con opciones
+    const modal = document.createElement('div');
+    modal.className = 'fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50';
+    modal.innerHTML = `
+      <div class="bg-white rounded-lg p-6 max-w-md mx-4 space-y-4">
+        <div class="text-center">
+          <h3 class="text-lg font-semibold text-gray-900">Enviar Notificación a</h3>
+          <p class="text-sm text-gray-600 mt-1">${client.name}</p>
+          <div class="mt-2 p-3 bg-red-50 rounded-lg">
+            <p class="text-sm text-red-800">
+              <strong>Deuda:</strong> $${client.overdueAmount.toFixed(2)} 
+              <span class="ml-2">(${client.daysOverdue} días)</span>
+            </p>
+          </div>
+        </div>
+        
+        <div class="space-y-2">
+          <button onclick="window.open('${emailUrl}'); document.body.removeChild(this.parentElement.parentElement.parentElement)" 
+                  class="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-md flex items-center justify-center gap-2 transition-colors">
+            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2.003 5.884L10 9.882l7.997-3.998A2 2 0 0016 4H4a2 2 0 00-1.997 1.884z"/>
+              <path d="M18 8.118l-8 4-8-4V14a2 2 0 002 2h12a2 2 0 002-2V8.118z"/>
+            </svg>
+            Enviar Email
+          </button>
+          
+          <button onclick="window.open('${whatsappUrl}', '_blank'); document.body.removeChild(this.parentElement.parentElement.parentElement)" 
+                  class="w-full bg-green-600 hover:bg-green-700 text-white py-2 px-4 rounded-md flex items-center justify-center gap-2 transition-colors">
+            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
+              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893A11.821 11.821 0 0020.485 3.287"/>
+            </svg>
+            Enviar WhatsApp
+          </button>
+          
+          <button onclick="window.open('${smsUrl}'); document.body.removeChild(this.parentElement.parentElement.parentElement)" 
+                  class="w-full bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-md flex items-center justify-center gap-2 transition-colors">
+            <svg class="h-4 w-4" fill="currentColor" viewBox="0 0 20 20">
+              <path d="M2 3a1 1 0 011-1h2.153a1 1 0 01.986.836l.74 4.435a1 1 0 01-.54 1.06l-1.548.773a11.037 11.037 0 006.105 6.105l.774-1.548a1 1 0 011.059-.54l4.435.74a1 1 0 01.836.986V17a1 1 0 01-1 1h-2C7.82 18 2 12.18 2 5V3z"/>
+            </svg>
+            Enviar SMS
+          </button>
+        </div>
+        
+        <button onclick="document.body.removeChild(this.parentElement.parentElement)" 
+                class="w-full bg-gray-300 hover:bg-gray-400 text-gray-700 py-2 px-4 rounded-md transition-colors">
+          Cancelar
+        </button>
+      </div>
+    `;
+    
+    document.body.appendChild(modal);
   };
 
   const generarPDFProfesional = () => {
@@ -288,6 +379,8 @@ export const DelinquencyReports = () => {
     // Tabla mejorada con autoTable
     const tableColumnHeaders = [
       'Cliente',
+      'Teléfono',
+      'Ciudad',
       'Cédula/RUC',
       'Monto\n(USD)',
       'Facturas',
@@ -301,6 +394,8 @@ export const DelinquencyReports = () => {
       const risk = getRiskLevel(client.daysOverdue);
       return [
         client.name,
+        client.phone,
+        client.city,
         client.cedula,
         `$${client.overdueAmount.toFixed(2)}`,
         client.overdueInvoices.toString(),
@@ -319,26 +414,28 @@ export const DelinquencyReports = () => {
       headStyles: { 
         fillColor: [59, 130, 246], // blue-600
         textColor: [255, 255, 255],
-        fontSize: 9,
+        fontSize: 8,
         fontStyle: 'bold',
         halign: 'center',
-        cellPadding: 4
+        cellPadding: 3
       },
       bodyStyles: { 
-        fontSize: 8,
-        cellPadding: 3,
+        fontSize: 7,
+        cellPadding: 2,
         halign: 'center'
       },
       alternateRowStyles: { fillColor: [248, 250, 252] }, // gray-50
       columnStyles: {
-        0: { halign: 'left', cellWidth: 35 }, // Cliente
-        1: { halign: 'center', cellWidth: 25 }, // Cédula
-        2: { halign: 'right', cellWidth: 20 }, // Monto
-        3: { halign: 'center', cellWidth: 15 }, // Facturas
-        4: { halign: 'center', cellWidth: 15 }, // Días
-        5: { halign: 'center', cellWidth: 22 }, // Último pago
-        6: { halign: 'right', cellWidth: 18 }, // Interés
-        7: { halign: 'center', cellWidth: 18 } // Riesgo
+        0: { halign: 'left', cellWidth: 30 }, // Cliente
+        1: { halign: 'center', cellWidth: 22 }, // Teléfono
+        2: { halign: 'center', cellWidth: 18 }, // Ciudad
+        3: { halign: 'center', cellWidth: 20 }, // Cédula
+        4: { halign: 'right', cellWidth: 18 }, // Monto
+        5: { halign: 'center', cellWidth: 12 }, // Facturas
+        6: { halign: 'center', cellWidth: 12 }, // Días
+        7: { halign: 'center', cellWidth: 18 }, // Último pago
+        8: { halign: 'right', cellWidth: 15 }, // Interés
+        9: { halign: 'center', cellWidth: 15 } // Riesgo
       },
       margin: { left: margin, right: margin },
       didParseCell: function(data) {
@@ -352,7 +449,7 @@ export const DelinquencyReports = () => {
         }
         
         // Colorear la columna de riesgo
-        if (data.section === 'body' && data.column.index === 7) {
+        if (data.section === 'body' && data.column.index === 9) {
           const riskText = data.cell.text[0];
           switch (riskText) {
             case 'Crítico':
@@ -493,7 +590,7 @@ export const DelinquencyReports = () => {
             <div className="flex items-center space-x-2 flex-1">
               <Search className="h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Buscar por nombre, cédula o correo..."
+                placeholder="Buscar por nombre, cédula, teléfono, ciudad..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 className="w-full"
@@ -555,7 +652,8 @@ export const DelinquencyReports = () => {
                 <TableHeader>
                   <TableRow>
                     <TableHead className="font-semibold">Cliente</TableHead>
-                    <TableHead className="font-semibold">Correo</TableHead>
+                    <TableHead className="font-semibold">Contacto</TableHead>
+                    <TableHead className="font-semibold">Ubicación</TableHead>
                     <TableHead className="font-semibold">Cédula/RUC</TableHead>
                     <TableHead className="font-semibold text-right">Monto Adeudado</TableHead>
                     <TableHead className="font-semibold text-center">Facturas</TableHead>
@@ -563,12 +661,14 @@ export const DelinquencyReports = () => {
                     <TableHead className="font-semibold">Último Pago</TableHead>
                     <TableHead className="font-semibold text-right">Interés por Mora</TableHead>
                     <TableHead className="font-semibold text-center">Riesgo</TableHead>
+                    <TableHead className="font-semibold text-center">Notificar</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {filteredData.map((client) => {
                     const risk = getRiskLevel(client.daysOverdue);
                     const isIrregular = esIrregular(client);
+                    
                     return (
                       <TableRow 
                         key={client.id} 
@@ -584,7 +684,32 @@ export const DelinquencyReports = () => {
                             )}
                           </div>
                         </TableCell>
-                        <TableCell className="text-sm text-gray-600">{client.email}</TableCell>
+                        
+                        <TableCell>
+                          <div className="flex flex-col space-y-1">
+                            <div className="flex items-center gap-1 text-sm">
+                              <MessageCircle className="h-3 w-3 text-gray-500" />
+                              <span className="font-mono text-blue-600">{client.phone}</span>
+                            </div>
+                            <div className="flex items-center gap-1 text-xs text-gray-600">
+                              <Mail className="h-3 w-3 text-gray-500" />
+                              <span>{client.email}</span>
+                            </div>
+                          </div>
+                        </TableCell>
+                        
+                        <TableCell>
+                          <div className="flex flex-col space-y-1">
+                            <div className="flex items-center gap-1 text-sm">
+                              <MapPin className="h-3 w-3 text-gray-500" />
+                              <span className="font-medium text-gray-700">{client.city}</span>
+                            </div>
+                            <div className="text-xs text-gray-600 truncate max-w-32">
+                              {client.address}
+                            </div>
+                          </div>
+                        </TableCell>
+                        
                         <TableCell className="font-mono text-sm">{client.cedula}</TableCell>
                         <TableCell className="text-right font-semibold text-red-600">
                           ${client.overdueAmount.toLocaleString('es-ES', { minimumFractionDigits: 2 })}
@@ -607,6 +732,18 @@ export const DelinquencyReports = () => {
                           <Badge variant={risk.variant} className="font-medium">
                             {risk.level}
                           </Badge>
+                        </TableCell>
+                        
+                        <TableCell className="text-center">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={() => sendNotification(client)}
+                            className="text-xs bg-blue-50 hover:bg-blue-100 border-blue-300 text-blue-700"
+                          >
+                            <Send className="h-3 w-3 mr-1" />
+                            Enviar
+                          </Button>
                         </TableCell>
                       </TableRow>
                     );
